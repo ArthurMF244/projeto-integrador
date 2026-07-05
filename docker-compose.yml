@@ -1,31 +1,16 @@
 services:
-  php:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    build: .
     ports:
-      - "127.0.0.1:${APP_PORT:-8081}:80"
-    volumes:
-      - ./:/var/www/html
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: ${DB_DATABASE:-si_chamados}
+      DB_URL: jdbc:mysql://mysql:3306/${DB_DATABASE:-si_chamados}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
       DB_USERNAME: ${DB_USERNAME:-si_chamados}
       DB_PASSWORD: ${DB_PASSWORD:-si_chamados}
-      RUN_MIGRATIONS: "true"
-      TZ: America/Sao_Paulo
     depends_on:
       mysql:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://localhost/api/health.php') === false ? 1 : 0);"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     restart: unless-stopped
-
   mysql:
     image: mysql:8.0
     ports:
@@ -38,13 +23,12 @@ services:
       TZ: America/Sao_Paulo
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
+      retries: 20
     restart: unless-stopped
-
 volumes:
   mysql_data:

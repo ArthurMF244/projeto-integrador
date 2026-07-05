@@ -1,0 +1,57 @@
+@import url("base.css");
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: rgba(20, 99, 255, 0.07);
+  box-shadow: inset 4px 0 0 var(--primary);
+}
+
+.called-title {
+  white-space: nowrap;
+}
+
+.empty-state {
+  display: none;
+  padding: 36px;
+  text-align: center;
+}
+
+.empty-state i {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+  background: var(--surface-2);
+  color: var(--primary);
+  font-size: 1.3rem;
+}
