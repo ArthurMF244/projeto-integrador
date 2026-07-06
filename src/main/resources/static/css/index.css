@@ -10,14 +10,14 @@
 .metric-card {
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--surface-glass);
   box-shadow: var(--shadow);
   padding: 14px 16px;
   backdrop-filter: blur(14px);
 }
 
 [data-theme="dark"] .metric-card {
-  background: rgba(21, 31, 46, 0.9);
+  background: var(--surface-glass);
 }
 
 .metric-top {
@@ -89,7 +89,7 @@ td small {
 }
 
 .clickable-row:hover {
-  background: rgba(20, 99, 255, 0.07);
+  background: var(--row-hover);
   box-shadow: inset 4px 0 0 var(--primary);
 }
 
@@ -98,7 +98,7 @@ td small {
 }
 
 .clickable-row:focus {
-  outline: 3px solid rgba(20, 99, 255, 0.22);
+  outline: 3px solid rgba(var(--primary-rgb), 0.24);
   outline-offset: -3px;
 }
 

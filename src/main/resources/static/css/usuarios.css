@@ -6,8 +6,22 @@
 
 table {
   width: 100%;
-  min-width: 860px;
+  min-width: 940px;
   border-collapse: collapse;
+}
+
+.actions-column {
+  width: 80px;
+  text-align: center;
+}
+
+.edit-user {
+  margin-inline: auto;
+}
+
+.edit-user:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 th,

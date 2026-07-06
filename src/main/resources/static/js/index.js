@@ -28,7 +28,7 @@ function bindEventos() {
 
 async function carregarUsuariosSelect() {
   try {
-    const { data } = await fetchJson(`${API_BASE}/usuarios.html?ativos=1`);
+    const { data } = await fetchJson(`${API_BASE}/usuarios?ativos=true`);
     preencherSelectUsuario('#solicitante', data, 'Selecione');
     preencherSelectUsuario('#responsavel', data, 'Sem responsável', true);
   } catch (error) {
@@ -58,7 +58,7 @@ async function carregarChamados() {
       prioridade: $('#filtroPrioridade')?.value || '',
     });
 
-    const { data, kpis } = await fetchJson(`${API_BASE}/chamados.html?${params.toString()}`);
+    const { data, kpis } = await fetchJson(`${API_BASE}/chamados?${params.toString()}`);
 
     $('#kpiAbertos').textContent = kpis.abertos;
     $('#kpiAtendimento').textContent = kpis.atendimento;
@@ -122,7 +122,7 @@ async function salvarChamado(event) {
   };
 
   try {
-    await fetchJson(`${API_BASE}/chamados.html`, {
+    await fetchJson(`${API_BASE}/chamados`, {
       method: 'POST',
       body: JSON.stringify(payload),
     });

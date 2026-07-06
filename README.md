@@ -2,10 +2,13 @@
 
 Aplicação acadêmica para abertura, atribuição, acompanhamento e encerramento de chamados. O backend foi migrado de PHP/PDO para Java 21 e Spring Boot 3; o frontend original foi preservado como HTML, CSS e JavaScript e agora consome somente a API REST Java.
 
+A interface utiliza uma identidade visual própria inspirada em aplicações Java modernas: vermelho rubi como destaque, superfícies neutras, sidebar escura e modos claro/escuro. Nenhuma marca ou logotipo oficial do Java/Oracle é utilizado.
+
 ## Tecnologias
 
 - Java 21, Spring Boot 3, Spring Web
 - Spring Data JPA, Hibernate e MySQL 8
+- Spring Security (sessão HTTP e BCrypt)
 - Maven
 - Bean Validation
 - SpringDoc OpenAPI / Swagger UI
@@ -17,6 +20,18 @@ Aplicação acadêmica para abertura, atribuição, acompanhamento e encerrament
 O fluxo é `Controller → Service → Repository → MySQL`. Controllers tratam HTTP e validação; Services concentram regras e transações; Repositories usam Spring Data JPA; DTOs separam os contratos REST das entidades persistidas. O código fica sob `src/main/java/br/com/projeto/integrador`.
 
 Entidades persistidas: `Chamado`, `Movimentacao`, `Usuario` e `Configuracao`. Um chamado pode referenciar um solicitante e um responsável e possui várias movimentações. Áreas, categorias, status e prioridades continuam como valores controlados, refletindo o banco legado.
+
+Pacotes principais:
+
+```text
+controller/   Endpoints Spring MVC
+service/      Regras de negócio e transações
+repository/   Persistência Spring Data JPA
+entity/       Mapeamento das tabelas MySQL
+dto/          Contratos de entrada e saída
+exception/    Exceções e tratamento global
+config/       Configuração OpenAPI
+```
 
 ## Configuração e execução
 
@@ -50,6 +65,25 @@ docker compose up -d --build
 - Aplicação: http://localhost:8080/
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
 - OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+Páginas disponíveis: chamados/dashboard (`/`), detalhe do chamado, atribuídos a mim, meus chamados, usuários, indicadores, relatórios e configurações.
+
+## Autenticação
+
+O acesso ocorre em http://localhost:8080/login.html por **nome de usuário e senha**. O Spring Security autentica os usuários do MySQL, mantém a autenticação em sessão HTTP e armazena somente hashes BCrypt. A senha ou seu hash nunca fazem parte das respostas da API.
+
+Perfis são mapeados para `ROLE_ADMINISTRADOR`, `ROLE_ATENDENTE` e `ROLE_SOLICITANTE`. Administradores podem gerenciar usuários; os demais perfis recebem `403 Forbidden` na página e na API de usuários. Swagger permanece público, mas a execução de endpoints protegidos requer uma sessão autenticada.
+
+Quando o nome definido em `ADMIN_USERNAME` ainda não existe, um administrador inicial é criado uma única vez, inclusive em bancos legados que já possuam outros usuários. Configure antes da primeira execução:
+
+```bash
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+ADMIN_EMAIL=admin@localhost
+DEFAULT_USER_PASSWORD=alterar123
+```
+
+Os valores acima são apenas para desenvolvimento local e devem ser alterados. Usuários legados sem credenciais recebem, uma única vez, um nome baseado no prefixo do e-mail (com sufixo numérico em colisões) e a senha definida por `DEFAULT_USER_PASSWORD`, imediatamente convertida em BCrypt. Reinicializações não modificam credenciais já existentes.
 
 ## API
 
@@ -90,7 +124,7 @@ No Swagger, abra o endpoint, clique em **Try it out**, informe o JSON e execute.
 mvn test
 ```
 
-`ChamadoServiceTest` testa criação com movimentação inicial e exclusão. Os testes são unitários e não exigem MySQL; a persistência da aplicação é MySQL.
+`ChamadoServiceTest` possui testes reais de criação com movimentação inicial, busca por ID, atualização sem duplicação e exclusão. Os testes são unitários e não exigem MySQL; a persistência da aplicação é MySQL.
 
 ## Migração
 

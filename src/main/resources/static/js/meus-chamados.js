@@ -3,11 +3,10 @@ document.addEventListener('DOMContentLoaded', carregarMeusChamados);
 async function carregarMeusChamados() {
   const tbody = $('#listaMeusChamados');
   const empty = $('#emptyState');
-  const profile = getCurrentProfile();
-
   try {
+    const profile = await fetchJson(`${API_BASE}/auth/me`);
     const params = new URLSearchParams({ solicitante: profile.nome });
-    const { data } = await fetchJson(`${API_BASE}/chamados.html?${params}`);
+    const { data } = await fetchJson(`${API_BASE}/chamados?${params}`);
     tbody.innerHTML = '';
 
     data.forEach((chamado) => {

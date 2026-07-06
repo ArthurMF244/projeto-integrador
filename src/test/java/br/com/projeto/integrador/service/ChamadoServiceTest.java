@@ -48,4 +48,48 @@ class ChamadoServiceTest {
 
         verify(chamadoRepository).delete(chamado);
     }
+
+    @Test
+    void buscarChamadoPorIdRetornaRegistroPersistido() {
+        Chamado chamado = chamadoExistente();
+        when(chamadoRepository.findById(7)).thenReturn(Optional.of(chamado));
+
+        ChamadoResponse response = service.buscar(7);
+
+        assertEquals("Erro no sistema", response.titulo());
+        assertEquals("Novo", response.status());
+        verify(chamadoRepository).findById(7);
+    }
+
+    @Test
+    void atualizarChamadoAlteraCamposSemCriarNovoRegistro() {
+        Chamado chamado = chamadoExistente();
+        when(chamadoRepository.findById(7)).thenReturn(Optional.of(chamado));
+        when(chamadoRepository.save(chamado)).thenReturn(chamado);
+        ChamadoRequest atualizacao = new ChamadoRequest("Erro corrigido", null, "Arthur",
+            "Financeiro", "TI - Sistemas", null, null, "Sistema", "Alta", "Alto",
+            "Em atendimento", "Diagnóstico atualizado", "Atendimento iniciado");
+
+        ChamadoResponse response = service.atualizar(7, atualizacao);
+
+        assertEquals("Erro corrigido", response.titulo());
+        assertEquals("Em atendimento", response.status());
+        assertEquals("Alta", response.prioridade());
+        assertEquals(1, chamado.getMovimentacoes().size());
+        verify(chamadoRepository).save(chamado);
+    }
+
+    private Chamado chamadoExistente() {
+        Chamado chamado = new Chamado();
+        chamado.setTitulo("Erro no sistema");
+        chamado.setSolicitanteNome("Arthur");
+        chamado.setAreaSolicitante("Financeiro");
+        chamado.setAreaResponsavel("TI - Sistemas");
+        chamado.setCategoria("Sistema");
+        chamado.setPrioridade("Média");
+        chamado.setImpacto("Baixo");
+        chamado.setStatus("Novo");
+        chamado.setDescricao("Sistema não abre");
+        return chamado;
+    }
 }

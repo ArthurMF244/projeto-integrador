@@ -13,6 +13,8 @@ public class Usuario {
     @Column(nullable = false, length = 100) private String setor;
     @Column(nullable = false, length = 30) private String perfil = "Solicitante";
     @Column(nullable = false, length = 20) private String status = "Ativo";
+    @Column(name = "nome_usuario", unique = true, length = 50) private String nomeUsuario;
+    @Column(length = 100) private String senha;
     @Column(name = "created_at", insertable = false, updatable = false) private LocalDateTime criadoEm;
     @Column(name = "updated_at", insertable = false, updatable = false) private LocalDateTime atualizadoEm;
 
@@ -28,5 +30,9 @@ public class Usuario {
     public void setPerfil(String perfil) { this.perfil = perfil; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getNomeUsuario() { return nomeUsuario; }
+    public void setNomeUsuario(String nomeUsuario) { this.nomeUsuario = nomeUsuario; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
     public LocalDateTime getCriadoEm() { return criadoEm; }
 }

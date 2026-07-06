@@ -40,6 +40,8 @@ Aplicação Maven em Java 21/Spring Boot 3:
 
 O frontend foi movido para `src/main/resources/static`, páginas foram convertidas para `.html`, links foram atualizados e todas as chamadas agora apontam para endpoints sem extensão PHP.
 
+Uma auditoria posterior corrigiu uma regressão em que os scripts ativos haviam recebido indevidamente a extensão `.html` nas URLs da API. Os contratos atuais usam `/api/chamados`, `/api/chamados/{id}`, `/api/usuarios` e `/api/configuracoes` e foram verificados contra a aplicação em execução.
+
 ## Correspondência de endpoints
 
 | PHP antigo | Endpoint Java | Status |
@@ -66,3 +68,4 @@ Listagem, filtros, KPIs, abertura e detalhe de chamados; atualização e histór
 - A identidade local continua demonstrativa, pois não havia autenticação real para migrar. Spring Security/JWT ficou fora do núcleo acadêmico solicitado.
 - Os fontes PHP permanecem em `legacy-php/`, desconectados do build e da execução.
 - O esquema existente foi reaproveitado; `ddl-auto=update` permite ao Hibernate conferir/complementar o banco.
+- A identidade azul legada foi substituída por tokens CSS vermelhos centralizados, sidebar neutra escura e cores semânticas distintas para status e prioridades.

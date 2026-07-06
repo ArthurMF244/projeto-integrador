@@ -33,10 +33,20 @@ function badgeClass(value) {
 }
 
 async function fetchJson(url, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const csrfHeaders = {};
+  if (!['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(method)) {
+    const csrfResponse = await fetch(`${API_BASE}/auth/csrf`, { headers: { Accept: 'application/json' } });
+    if (csrfResponse.ok) {
+      const csrf = await csrfResponse.json();
+      csrfHeaders[csrf.headerName] = csrf.token;
+    }
+  }
   const headers = {
     Accept: 'application/json',
     ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers || {}),
+    ...csrfHeaders,
   };
 
   const response = await fetch(url, { ...options, headers });
@@ -88,20 +98,6 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme || '');
 }
 
-function getCurrentProfile() {
-  const fallback = {
-    nome: 'Arthur de Marco Faggion',
-    email: 'arthur@example.com',
-    setor: 'TI - Sistemas',
-  };
-
-  try {
-    return { ...fallback, ...JSON.parse(localStorage.getItem('si_perfil_usuario') || '{}') };
-  } catch {
-    return fallback;
-  }
-}
-
 function currentPage() {
   return window.location.pathname.split('/').pop() || 'index.html';
 }
@@ -110,11 +106,17 @@ function activeClass(pages) {
   return pages.includes(currentPage()) ? 'active' : '';
 }
 
-function renderSidebar() {
+async function renderSidebar() {
   const sidebar = $('#sidebarContainer');
   if (!sidebar) return;
 
-  const profile = getCurrentProfile();
+  let profile;
+  try {
+    profile = await fetchJson(`${API_BASE}/auth/me`);
+  } catch {
+    window.location.href = '/login.html';
+    return;
+  }
   const initials = profile.nome
     .split(/\s+/)
     .filter(Boolean)
@@ -132,8 +134,10 @@ function renderSidebar() {
         <div class="brand-main">
           <div class="brand-icon">SI</div>
           <div class="brand-text">
-            <strong class="brand-system-name">SI Chamados</strong>
-            <span>Sistema interno</span>
+            <strong class="brand-system-name">
+              <span>Sistemas</span>
+              <span>Internos</span>
+            </strong>
           </div>
         </div>
         <button class="sidebar-toggle" id="btnToggleSidebar" type="button" aria-label="${collapsed ? 'Expandir menu' : 'Comprimir menu'}">
@@ -151,9 +155,9 @@ function renderSidebar() {
         <a class="menu-link ${activeClass(['meus-chamados.html'])}" href="meus-chamados.html" title="Meus chamados">
           <i class="fa-solid fa-inbox"></i><span class="menu-label">Meus chamados</span>
         </a>
-        <a class="menu-link ${activeClass(['usuarios.html'])}" href="usuarios.html" title="Usuários">
+        ${profile.perfil === 'Administrador' ? `<a class="menu-link ${activeClass(['usuarios.html'])}" href="usuarios.html" title="Usuários">
           <i class="fa-solid fa-users"></i><span class="menu-label">Usuários</span>
-        </a>
+        </a>` : ''}
         <div class="menu-group ${reportsActive ? 'open' : ''}">
           <button class="menu-parent ${reportsActive ? 'active' : ''}" id="btnRelatoriosMenu" type="button" aria-expanded="${reportsActive}">
             <i class="fa-solid fa-chart-pie"></i><span class="menu-label">Relatórios</span><i class="fa-solid fa-chevron-down submenu-arrow"></i>
@@ -168,9 +172,10 @@ function renderSidebar() {
         </a>
       </nav>
 
-      <div class="sidebar-user" title="Perfil local de demonstração">
+      <div class="sidebar-user" title="${escapeHtml(profile.setor)}">
         <div class="user-avatar">${escapeHtml(initials || 'U')}</div>
         <div class="user-info"><strong>${escapeHtml(profile.nome)}</strong><span>${escapeHtml(profile.email)}</span></div>
+        <button class="logout-button" id="btnLogout" type="button" title="Sair" aria-label="Sair"><i class="fa-solid fa-right-from-bracket"></i></button>
       </div>
     </aside>
   `;
@@ -187,15 +192,16 @@ function renderSidebar() {
     const isOpen = group.classList.toggle('open');
     event.currentTarget.setAttribute('aria-expanded', String(isOpen));
   });
+  $('#btnLogout')?.addEventListener('click', async () => {
+    await fetchJson('/logout', { method: 'POST' });
+    window.location.href = '/login.html?logout=true';
+  });
 }
 
 async function loadSystemConfig() {
   try {
-    const { data } = await fetchJson(`${API_BASE}/configuracoes.html`);
+    const { data } = await fetchJson(`${API_BASE}/configuracoes`);
     if (!data) return;
-    $$('.brand-system-name').forEach((element) => {
-      element.textContent = data.nome_sistema || 'SI Chamados';
-    });
     applyTheme(data.tema || '');
   } catch (error) {
     console.warn(error.message);

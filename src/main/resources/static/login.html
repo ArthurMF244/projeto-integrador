@@ -1,0 +1,10 @@
+<!doctype html><html lang="pt-BR" data-theme="dark"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SI | Entrar</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"><link rel="stylesheet" href="css/login.css">
+</head><body><main class="login-shell"><section class="login-card"><div class="brand-icon">SI</div>
+<h1>Sistemas Internos</h1><p>Acesse sua conta para continuar</p><div id="loginMessage" class="message" role="alert"></div>
+<form method="post" action="/login"><input type="hidden" id="csrfToken" name="_csrf">
+<label>Nome de usuário<span class="input-wrap"><i class="fa-solid fa-user"></i><input name="nomeUsuario" autocomplete="username" required autofocus></span></label>
+<label>Senha<span class="input-wrap"><i class="fa-solid fa-lock"></i><input id="senha" name="senha" type="password" autocomplete="current-password" required><button type="button" id="toggleSenha" aria-label="Mostrar senha"><i class="fa-solid fa-eye"></i></button></span></label>
+<button class="submit" type="submit"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button></form>
+</section></main><script src="js/login.js"></script></body></html>

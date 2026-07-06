@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', carregarIndicadores);
 
 async function carregarIndicadores() {
   try {
-    const { data: chamados } = await fetchJson(`${API_BASE}/chamados.html`);
+    const { data: chamados } = await fetchJson(`${API_BASE}/chamados`);
     const total = chamados.length;
     const emAndamento = chamados.filter((chamado) => chamado.status !== 'Finalizado').length;
     const finalizados = chamados.filter((chamado) => chamado.status === 'Finalizado').length;

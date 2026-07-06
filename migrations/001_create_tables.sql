@@ -1,3 +1,5 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -5,6 +7,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     setor VARCHAR(100) NOT NULL,
     perfil ENUM('Administrador', 'Atendente', 'Solicitante') NOT NULL DEFAULT 'Solicitante',
     status ENUM('Ativo', 'Inativo') NOT NULL DEFAULT 'Ativo',
+    nome_usuario VARCHAR(50) NULL UNIQUE,
+    senha VARCHAR(100) NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -71,3 +75,12 @@ INSERT INTO usuarios (nome, email, setor, perfil, status) VALUES
 ('Maria Silva', 'maria@example.com', 'Recepção', 'Solicitante', 'Ativo'),
 ('João Souza', 'joao@example.com', 'TI - Infraestrutura', 'Atendente', 'Ativo')
 ON DUPLICATE KEY UPDATE nome = VALUES(nome), setor = VALUES(setor), perfil = VALUES(perfil), status = VALUES(status);
+
+-- Corrige de forma idempotente seeds de versões antigas que foram importados com dupla codificação.
+UPDATE usuarios
+SET nome = CONVERT(0x4A6FC3A36F20536F757A61 USING utf8mb4)
+WHERE email = 'joao@example.com';
+
+UPDATE usuarios
+SET setor = CONVERT(0x5265636570C3A7C3A36F USING utf8mb4)
+WHERE email = 'maria@example.com';

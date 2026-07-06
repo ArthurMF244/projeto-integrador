@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', carregarRelatorios);
 
 async function carregarRelatorios() {
   try {
-    const { data: chamados } = await fetchJson(`${API_BASE}/chamados.html`);
+    const { data: chamados } = await fetchJson(`${API_BASE}/chamados`);
     const areas = [...new Set(chamados.map((chamado) => chamado.area_responsavel))].sort();
 
     $('#listaRelatorios').innerHTML = areas.map((area) => {

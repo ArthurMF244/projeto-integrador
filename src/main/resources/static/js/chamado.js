@@ -28,7 +28,7 @@ function bindEventosChamado() {
 
 async function carregarResponsaveis() {
   try {
-    const { data } = await fetchJson(`${API_BASE}/usuarios.html?ativos=1`);
+    const { data } = await fetchJson(`${API_BASE}/usuarios?ativos=true`);
     const select = $('#edicaoResponsavel');
     if (!select) return;
 
@@ -53,7 +53,7 @@ async function carregarChamado() {
   }
 
   try {
-    const { data, movimentacoes } = await fetchJson(`${API_BASE}/chamados.html?id=${id}`);
+    const { data, movimentacoes } = await fetchJson(`${API_BASE}/chamados/${id}`);
     chamadoAtual = data;
 
     $('#tituloPaginaChamado').textContent = `Chamado #${data.id}`;
@@ -121,7 +121,7 @@ async function salvarEdicaoChamado(event) {
   };
 
   try {
-    await fetchJson(`${API_BASE}/chamados.html?id=${id}`, {
+    await fetchJson(`${API_BASE}/chamados/${id}`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     });

@@ -1,7 +1,6 @@
 package br.com.projeto.integrador.controller;
 
-import br.com.projeto.integrador.dto.UsuarioRequest;
-import br.com.projeto.integrador.entity.Usuario;
+import br.com.projeto.integrador.dto.*;
 import br.com.projeto.integrador.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
@@ -16,11 +15,12 @@ public class UsuarioController {
     @GetMapping public Map<String,Object> listar(@RequestParam(defaultValue="false") boolean ativos) {
         return Map.of("data", service.listar(ativos));
     }
-    @GetMapping("/{id}") public Usuario buscar(@PathVariable Integer id) { return service.buscar(id); }
-    @PostMapping public ResponseEntity<Usuario> criar(@Valid @RequestBody UsuarioRequest r) {
-        Usuario u = service.criar(r); return ResponseEntity.created(URI.create("/api/usuarios/" + u.getId())).body(u);
+    @GetMapping("/{id}") public UsuarioResponse buscar(@PathVariable Integer id) { return service.buscar(id); }
+    @PostMapping public ResponseEntity<UsuarioResponse> criar(@Valid @RequestBody UsuarioCreateRequest r) {
+        UsuarioResponse u = service.criar(r);
+        return ResponseEntity.created(URI.create("/api/usuarios/" + u.id())).body(u);
     }
-    @PutMapping("/{id}") public Usuario atualizar(@PathVariable Integer id, @Valid @RequestBody UsuarioRequest r) {
+    @PutMapping("/{id}") public UsuarioResponse atualizar(@PathVariable Integer id, @Valid @RequestBody UsuarioUpdateRequest r) {
         return service.atualizar(id, r);
     }
     @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT)

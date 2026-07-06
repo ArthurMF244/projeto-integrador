@@ -10,13 +10,13 @@
 .indicator-card {
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--surface-glass);
   box-shadow: var(--shadow);
   padding: 16px;
 }
 
 [data-theme="dark"] .indicator-card {
-  background: rgba(21, 31, 46, 0.9);
+  background: var(--surface-glass);
 }
 
 .indicator-card span {

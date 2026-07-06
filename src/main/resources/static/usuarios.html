@@ -31,7 +31,7 @@
         <div class="panel-header">
           <div>
             <h2>Gerenciamento de usuários</h2>
-            <p>Cadastre e acompanhe usuários do sistema.</p>
+            <p>Cadastre, edite e acompanhe usuários do sistema.</p>
           </div>
         </div>
 
@@ -40,10 +40,12 @@
             <thead>
               <tr>
                 <th>Nome</th>
+                <th>Nome de usuário</th>
                 <th>E-mail</th>
                 <th>Setor</th>
                 <th>Perfil</th>
                 <th>Status</th>
+                <th class="actions-column">Ações</th>
               </tr>
             </thead>
 
@@ -58,7 +60,7 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalUsuarioTitulo">
       <div class="modal-header">
         <div>
-          <span class="eyebrow">Cadastro</span>
+          <span class="eyebrow" id="modalUsuarioContexto">Cadastro</span>
           <h2 id="modalUsuarioTitulo">Novo usuário</h2>
         </div>
 
@@ -76,6 +78,16 @@
         <label>
           E-mail
           <input id="usuarioEmail" type="email" required />
+        </label>
+        <label>
+          Nome de usuário
+          <input id="usuarioNomeUsuario" type="text" minlength="4" maxlength="50" required />
+        </label>
+        <label>
+          <span id="usuarioSenhaLabel">Senha</span>
+          <span class="password-field"><input id="usuarioSenha" type="password" minlength="6" required />
+            <button id="btnToggleUsuarioSenha" type="button" aria-label="Mostrar senha"><i class="fa-solid fa-eye"></i></button>
+          </span>
         </label>
 
         <label>
@@ -106,9 +118,9 @@
             Cancelar
           </button>
 
-          <button class="btn primary" type="submit">
+          <button class="btn primary" id="btnSalvarUsuario" type="submit">
             <i class="fa-solid fa-floppy-disk"></i>
-            Salvar usuário
+            <span id="textoSalvarUsuario">Salvar usuário</span>
           </button>
         </div>
       </form>

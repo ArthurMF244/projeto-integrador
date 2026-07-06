@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function carregarConfiguracoes() {
   try {
-    const { data } = await fetchJson(`${API_BASE}/configuracoes.html`);
+    const { data } = await fetchJson(`${API_BASE}/configuracoes`);
 
     if (!data) return;
 
@@ -27,15 +27,12 @@ async function salvarConfiguracoes(event) {
   };
 
   try {
-    await fetchJson(`${API_BASE}/configuracoes.html`, {
+    await fetchJson(`${API_BASE}/configuracoes`, {
       method: 'PUT',
       body: JSON.stringify(payload),
     });
 
     applyTheme(payload.tema);
-    $$('.brand-system-name').forEach((element) => {
-      element.textContent = payload.nome_sistema;
-    });
     showToast('Configurações salvas com sucesso.');
   } catch (error) {
     showToast(error.message, 'error');
