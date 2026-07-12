@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.http.HttpStatus;
 
 @Configuration
 public class SecurityConfig {
@@ -21,6 +23,9 @@ public class SecurityConfig {
                     "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/usuarios.html", "/api/usuarios/**").hasRole("ADMINISTRADOR")
                 .anyRequest().authenticated())
+            .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
+                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                request -> request.getRequestURI().startsWith("/api/")))
             .formLogin(f -> f.loginPage("/login.html").loginProcessingUrl("/login")
                 .usernameParameter("nomeUsuario").passwordParameter("senha")
                 .defaultSuccessUrl("/index.html", true)

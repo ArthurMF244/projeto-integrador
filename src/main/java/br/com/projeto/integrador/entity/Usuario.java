@@ -15,6 +15,8 @@ public class Usuario {
     @Column(nullable = false, length = 20) private String status = "Ativo";
     @Column(name = "nome_usuario", unique = true, length = 50) private String nomeUsuario;
     @Column(length = 100) private String senha;
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'dark'") private String tema = "dark";
+    @Column(length = 255) private String foto;
     @Column(name = "created_at", insertable = false, updatable = false) private LocalDateTime criadoEm;
     @Column(name = "updated_at", insertable = false, updatable = false) private LocalDateTime atualizadoEm;
 
@@ -34,5 +36,9 @@ public class Usuario {
     public void setNomeUsuario(String nomeUsuario) { this.nomeUsuario = nomeUsuario; }
     public String getSenha() { return senha; }
     public void setSenha(String senha) { this.senha = senha; }
+    public String getTema() { return tema; }
+    public void setTema(String tema) { this.tema = tema; }
+    public String getFoto() { return foto; }
+    public void setFoto(String foto) { this.foto = foto; }
     public LocalDateTime getCriadoEm() { return criadoEm; }
 }

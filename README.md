@@ -1,6 +1,6 @@
 # Projeto Integrador - Sistema de Chamados
 
-Aplicação acadêmica para abertura, atribuição, acompanhamento e encerramento de chamados. O backend foi migrado de PHP/PDO para Java 21 e Spring Boot 3.5.3; o frontend original foi preservado como HTML, CSS e JavaScript e agora consome somente a API REST Java.
+Aplicação acadêmica para abertura, atribuição, acompanhamento e encerramento de chamados, desenvolvida em Java 21 e Spring Boot 3.5.3. O frontend utiliza HTML, CSS e JavaScript e consome a API REST da aplicação.
 
 A interface utiliza uma identidade visual própria inspirada em aplicações Java modernas: vermelho rubi como destaque, superfícies neutras, sidebar escura e modos claro/escuro. Nenhuma marca ou logotipo oficial do Java/Oracle é utilizado.
 
@@ -19,7 +19,7 @@ A interface utiliza uma identidade visual própria inspirada em aplicações Jav
 
 O fluxo é `Controller → Service → Repository → MySQL`. Controllers tratam HTTP e validação; Services concentram regras e transações; Repositories usam Spring Data JPA; DTOs separam os contratos REST das entidades persistidas. O código fica sob `src/main/java/br/com/projeto/integrador`.
 
-Entidades persistidas: `Chamado`, `Movimentacao`, `Usuario` e `Configuracao`. Um chamado pode referenciar um solicitante e um responsável e possui várias movimentações. Áreas, categorias, status e prioridades continuam como valores controlados, refletindo o banco legado.
+Entidades persistidas: `Chamado`, `Movimentacao` e `Usuario`. Um chamado pode referenciar um solicitante e um responsável e possui várias movimentações. Áreas, categorias, status e prioridades são valores controlados pela aplicação.
 
 Pacotes principais:
 
@@ -63,6 +63,9 @@ Também é possível subir aplicação e banco em contêineres:
 docker compose up -d --build
 ```
 
+As fotos de perfil são armazenadas no volume persistente `profile_photos`. Em execução local,
+a pasta pode ser configurada por `PROFILE_PHOTOS_DIR` e usa `./data/profile-photos` por padrão.
+
 - Aplicação: http://localhost:8080/
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
 - OpenAPI JSON: http://localhost:8080/v3/api-docs
@@ -77,7 +80,7 @@ Perfis são mapeados para `ROLE_ADMINISTRADOR`, `ROLE_ATENDENTE` e `ROLE_SOLICIT
 
 O frontend consulta `GET /api/auth/me` para exibir o usuário da sessão na sidebar. Requisições de alteração (`POST`, `PUT` e `DELETE`) enviam o token CSRF obtido em `GET /api/auth/csrf`; a proteção CSRF não foi desabilitada.
 
-Quando o nome definido em `ADMIN_USERNAME` ainda não existe, um administrador inicial é criado uma única vez, inclusive em bancos legados que já possuam outros usuários. Configure antes da primeira execução:
+Quando o nome definido em `ADMIN_USERNAME` ainda não existe, um administrador inicial é criado uma única vez. Configure antes da primeira execução:
 
 ```bash
 ADMIN_USERNAME=admin
@@ -86,7 +89,7 @@ ADMIN_EMAIL=admin@localhost
 DEFAULT_USER_PASSWORD=alterar123
 ```
 
-Os valores acima são apenas para desenvolvimento local e devem ser alterados. Usuários legados sem credenciais recebem, uma única vez, um nome baseado no prefixo do e-mail (com sufixo numérico em colisões) e a senha definida por `DEFAULT_USER_PASSWORD`, imediatamente convertida em BCrypt. Reinicializações não modificam credenciais já existentes.
+Os valores acima são apenas para desenvolvimento local e devem ser alterados. Usuários sem credenciais recebem, uma única vez, um nome baseado no prefixo do e-mail (com sufixo numérico em colisões) e a senha definida por `DEFAULT_USER_PASSWORD`, imediatamente convertida em BCrypt. Reinicializações não modificam credenciais já existentes.
 
 ## API
 
@@ -98,7 +101,9 @@ Os valores acima são apenas para desenvolvimento local e devem ser alterados. U
 | PUT | `/api/chamados/{id}` | Atualizar e registrar movimentação |
 | DELETE | `/api/chamados/{id}` | Excluir |
 | GET/POST/PUT/DELETE | `/api/usuarios` e `/api/usuarios/{id}` | CRUD de usuários |
-| GET/PUT | `/api/configuracoes` | Consultar/salvar preferências |
+| GET/PUT | `/api/perfil` | Consultar/atualizar o próprio perfil |
+| POST/DELETE | `/api/perfil/foto` | Alterar/remover a própria foto |
+| PUT | `/api/perfil/senha` | Alterar a própria senha |
 | GET | `/api/auth/me` | Consultar o usuário autenticado |
 | GET | `/api/auth/csrf` | Obter o token CSRF da sessão |
 
@@ -130,7 +135,3 @@ mvn test
 ```
 
 `ChamadoServiceTest` cobre criação com movimentação inicial, busca por ID, atualização sem duplicação e exclusão. `UsuarioServiceTest` cobre hash de senha, nome de usuário duplicado e atualização com ou sem nova senha. `UsuarioDetailsServiceTest` verifica o bloqueio de usuário inativo. Os testes atuais são unitários e não exigem MySQL; a persistência da aplicação em execução utiliza MySQL.
-
-## Migração
-
-O relatório técnico completo está em [MIGRACAO_PHP_JAVA.md](MIGRACAO_PHP_JAVA.md). A implementação anterior foi preservada em `legacy-php/` apenas como referência e não participa da execução.

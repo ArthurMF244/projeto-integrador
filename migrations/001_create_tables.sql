@@ -58,18 +58,6 @@ CREATE TABLE IF NOT EXISTS chamado_movimentacoes (
     INDEX idx_mov_criado_em (criado_em)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS configuracoes (
-    id TINYINT PRIMARY KEY DEFAULT 1,
-    nome_sistema VARCHAR(120) NOT NULL DEFAULT 'SI Chamados',
-    tema ENUM('', 'dark') NOT NULL DEFAULT '',
-    email_suporte VARCHAR(150) NOT NULL DEFAULT 'suporte@exemplo.com',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO configuracoes (id, nome_sistema, tema, email_suporte)
-VALUES (1, 'SI Chamados', '', 'suporte@exemplo.com')
-ON DUPLICATE KEY UPDATE id = id;
-
 INSERT INTO usuarios (nome, email, setor, perfil, status) VALUES
 ('Arthur de Marco Faggion', 'arthur@example.com', 'TI - Sistemas', 'Administrador', 'Ativo'),
 ('Maria Silva', 'maria@example.com', 'Recepção', 'Solicitante', 'Ativo'),

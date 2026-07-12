@@ -9,6 +9,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findAllByOrderByNomeAsc();
     List<Usuario> findByStatusOrderByNomeAsc(String status);
     boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmailIgnoreCaseAndIdNot(String email, Integer id);
     Optional<Usuario> findByNomeUsuarioIgnoreCase(String nomeUsuario);
     boolean existsByNomeUsuarioIgnoreCase(String nomeUsuario);
 }

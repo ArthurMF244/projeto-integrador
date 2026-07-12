@@ -44,7 +44,7 @@ async function fetchJson(url, options = {}) {
   }
   const headers = {
     Accept: 'application/json',
-    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(options.body && !(options.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers || {}),
     ...csrfHeaders,
   };
@@ -94,10 +94,6 @@ function closeModal(selector) {
   modal.style.removeProperty('display');
 }
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme || '');
-}
-
 function currentPage() {
   return window.location.pathname.split('/').pop() || 'index.html';
 }
@@ -113,6 +109,8 @@ async function renderSidebar() {
   let profile;
   try {
     profile = await fetchJson(`${API_BASE}/auth/me`);
+    localStorage.setItem('si_tema', profile.tema || 'dark');
+    applyTheme(profile.tema || 'dark');
   } catch {
     window.location.href = '/login.html';
     return;
@@ -126,6 +124,9 @@ async function renderSidebar() {
     .toUpperCase();
   const reportsActive = ['indicadores.html', 'relatorios.html'].includes(currentPage());
   const collapsed = localStorage.getItem('si_sidebar_comprimida') === 'true';
+  const avatar = profile.fotoUrl
+    ? `<img class="user-avatar" src="${escapeHtml(profile.fotoUrl)}" alt="">`
+    : `<div class="user-avatar">${escapeHtml(initials || 'U')}</div>`;
 
   document.body.classList.toggle('sidebar-collapsed', collapsed);
   sidebar.innerHTML = `
@@ -167,15 +168,18 @@ async function renderSidebar() {
             <a class="${activeClass(['relatorios.html'])}" href="relatorios.html">Relatórios</a>
           </div>
         </div>
-        <a class="menu-link ${activeClass(['configuracoes.html'])}" href="configuracoes.html" title="Configurações">
-          <i class="fa-solid fa-gear"></i><span class="menu-label">Configurações</span>
-        </a>
       </nav>
 
-      <div class="sidebar-user" title="${escapeHtml(profile.setor)}">
-        <div class="user-avatar">${escapeHtml(initials || 'U')}</div>
-        <div class="user-info"><strong>${escapeHtml(profile.nome)}</strong><span>${escapeHtml(profile.email)}</span></div>
-        <button class="logout-button" id="btnLogout" type="button" title="Sair" aria-label="Sair"><i class="fa-solid fa-right-from-bracket"></i></button>
+      <div class="sidebar-user-area">
+        <div class="user-dropdown" id="userDropdown" aria-hidden="true">
+          <a href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu perfil</span></a>
+          <button id="btnLogout" type="button"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></button>
+        </div>
+        <button class="sidebar-user" id="btnUserMenu" type="button" title="${escapeHtml(profile.setor)}" aria-haspopup="menu" aria-expanded="false">
+          ${avatar}
+          <span class="user-info"><strong>${escapeHtml(profile.nome)}</strong><span>${escapeHtml(profile.email)}</span></span>
+          <i class="fa-solid fa-ellipsis user-arrow"></i>
+        </button>
       </div>
     </aside>
   `;
@@ -192,23 +196,32 @@ async function renderSidebar() {
     const isOpen = group.classList.toggle('open');
     event.currentTarget.setAttribute('aria-expanded', String(isOpen));
   });
-  $('#btnLogout')?.addEventListener('click', async () => {
-    await fetchJson('/logout', { method: 'POST' });
-    window.location.href = '/login.html?logout=true';
+  const fecharMenuUsuario = () => {
+    $('#userDropdown')?.classList.remove('open');
+    $('#userDropdown')?.setAttribute('aria-hidden', 'true');
+    $('#btnUserMenu')?.setAttribute('aria-expanded', 'false');
+  };
+  $('#btnUserMenu')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const dropdown = $('#userDropdown');
+    const aberto = dropdown.classList.toggle('open');
+    dropdown.setAttribute('aria-hidden', String(!aberto));
+    event.currentTarget.setAttribute('aria-expanded', String(aberto));
   });
-}
-
-async function loadSystemConfig() {
-  try {
-    const { data } = await fetchJson(`${API_BASE}/configuracoes`);
-    if (!data) return;
-    applyTheme(data.tema || '');
-  } catch (error) {
-    console.warn(error.message);
-  }
+  $('#userDropdown')?.addEventListener('click', (event) => event.stopPropagation());
+  document.addEventListener('click', fecharMenuUsuario);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') fecharMenuUsuario();
+  });
+  $('#btnLogout')?.addEventListener('click', async () => {
+    try {
+      await fetchJson('/logout', { method: 'POST' });
+    } finally {
+      window.location.href = '/login.html?logout=true';
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   renderSidebar();
-  loadSystemConfig();
 });

@@ -1,0 +1,5 @@
+ALTER TABLE usuarios
+    ADD COLUMN tema VARCHAR(20) NOT NULL DEFAULT 'dark' AFTER senha,
+    ADD COLUMN foto VARCHAR(255) NULL AFTER tema;
+
+DROP TABLE IF EXISTS configuracoes;

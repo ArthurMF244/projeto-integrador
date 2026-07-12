@@ -1,0 +1,105 @@
+@import url("base.css");
+
+.profile-content {
+  width: 100%;
+  max-width: none;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(0px, 1vw, 12px);
+}
+
+.profile-header {
+  margin-bottom: 20px;
+}
+
+.profile-row {
+  display: grid;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.profile-row + .profile-row {
+  margin-top: 20px;
+}
+
+.profile-row-primary {
+  grid-template-columns: 360px minmax(0, 1fr);
+}
+
+.profile-row-secondary {
+  grid-template-columns: 430px minmax(0, 1fr);
+}
+
+.profile-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.profile-card .card-body {
+  flex: 1;
+}
+
+.profile-card .panel-header { padding: 18px 20px; }
+.card-body { padding: 18px 20px; }
+.photo-body { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.profile-photo { display: grid; flex: 0 0 116px; width: 116px; height: 116px; place-items: center; overflow: hidden; border: 4px solid var(--surface); border-radius: 50%; background: linear-gradient(135deg, #fff, var(--primary-soft)); box-shadow: 0 10px 28px rgba(var(--primary-rgb), .18); color: var(--primary-dark); font-size: 2.2rem; font-weight: 900; }
+.profile-photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo-actions { display: grid; min-width: 150px; gap: 10px; }
+.photo-actions small, .theme-hint { color: var(--muted); }
+.form-grid-profile { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+input[readonly] { background: var(--surface-2); color: var(--muted); cursor: not-allowed; }
+.form-actions { display: flex; justify-content: flex-end; }
+.theme-options { display: grid; grid-template-columns: 90px 90px minmax(0, 1fr); gap: 12px; }
+.theme-option:last-child { grid-column: auto; }
+.theme-option { cursor: pointer; }
+.theme-option input { position: absolute; opacity: 0; pointer-events: none; }
+.theme-option span { display: flex; min-height: 68px; gap: 10px; align-items: center; justify-content: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--text); text-align: center; transition: .18s ease; }
+.theme-option span i { color: var(--primary); font-size: 1.2rem; }
+.theme-option input:checked + span { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), .12); }
+.theme-hint { margin: 14px 0 0; font-size: .86rem; }
+.password-grid { display: grid; grid-template-columns: repeat(3, minmax(130px, 1fr)) auto; gap: 14px; align-items: end; }
+.security-card .form-actions { grid-column: auto; }
+.security-card .form-actions .btn { white-space: nowrap; }
+.crop-modal { width: min(820px, 100%); }
+.crop-body { display: grid; grid-template-columns: 1fr 150px; gap: 22px; padding: 22px; }
+.crop-stage { min-width: 0; height: 420px; overflow: hidden; border-radius: 18px; background: #090b0f; }
+.crop-stage img { display: block; max-width: 100%; }
+.crop-preview-wrap { display: grid; align-content: start; justify-items: center; gap: 10px; color: var(--muted); font-size: .82rem; font-weight: 800; }
+.crop-preview { width: 128px; height: 128px; overflow: hidden; border-radius: 50%; border: 3px solid var(--surface); box-shadow: var(--shadow); }
+.crop-controls { display: flex; gap: 8px; grid-column: 1 / -1; }
+.crop-footer { padding: 0 22px 22px; }
+
+@media (max-width: 1180px) {
+  .profile-row-primary { grid-template-columns: 320px minmax(0, 1fr); }
+  .profile-row-secondary { grid-template-columns: 380px minmax(0, 1fr); }
+  .photo-body { flex-direction: column; text-align: center; }
+  .photo-actions { width: 100%; }
+  .form-grid-profile { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .password-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .security-card .form-actions { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  .profile-row-primary,
+  .profile-row-secondary { grid-template-columns: 1fr; }
+  .photo-body { flex-direction: row; text-align: left; }
+  .photo-actions { width: auto; }
+  .password-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .profile-container { padding-inline: 0; }
+  .photo-body { flex-direction: column; text-align: center; }
+  .photo-actions { width: 100%; }
+  .form-grid-profile, .password-grid, .crop-body { grid-template-columns: 1fr; }
+  .theme-options { grid-template-columns: 1fr; }
+  .theme-option:last-child { grid-column: auto; }
+  .crop-stage { height: 320px; }
+  .crop-preview-wrap { display: none; }
+  .form-actions { justify-content: stretch; }
+}

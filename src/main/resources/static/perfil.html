@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="js/theme.js"></script>
+  <title>SI | Meu perfil</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+  <link rel="stylesheet" href="css/perfil.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="sidebarContainer"></div>
+    <main class="content profile-content">
+      <div class="profile-container">
+        <header class="topbar profile-header">
+          <div>
+            <span class="eyebrow">Conta</span>
+            <h1>Meu perfil</h1>
+            <p>Gerencie seus dados pessoais, aparência e segurança.</p>
+          </div>
+        </header>
+
+        <div class="profile-row profile-row-primary">
+          <section class="panel profile-card photo-card">
+          <div class="panel-header"><div><h2>Foto do perfil</h2><p>Sua identificação visual no sistema.</p></div></div>
+          <div class="card-body photo-body">
+            <div id="profileAvatar" class="profile-photo" aria-label="Foto atual"></div>
+            <div class="photo-actions">
+              <input id="fotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+              <button class="btn secondary" id="btnAlterarFoto" type="button"><i class="fa-solid fa-camera"></i>Alterar foto</button>
+              <button class="btn ghost" id="btnRemoverFoto" type="button" hidden><i class="fa-solid fa-trash"></i>Remover foto</button>
+              <small>JPG, PNG ou WEBP, até 5 MB.</small>
+            </div>
+          </div>
+          </section>
+
+          <section class="panel profile-card personal-card">
+          <div class="panel-header"><div><h2>Informações pessoais</h2><p>Dados associados à sua conta.</p></div></div>
+          <form id="formPerfil" class="card-body form-grid-profile">
+            <label>Nome<input id="perfilNome" type="text" maxlength="150" required /></label>
+            <label>E-mail<input id="perfilEmail" type="email" maxlength="150" required /></label>
+            <label>Nome de usuário<input id="perfilNomeUsuario" type="text" readonly /></label>
+            <label>Setor<input id="perfilSetor" type="text" readonly /></label>
+            <label>Perfil<input id="perfilPerfil" type="text" readonly /></label>
+            <label>Status<input id="perfilStatus" type="text" readonly /></label>
+            <div class="form-actions full"><button class="btn primary" type="submit"><i class="fa-solid fa-floppy-disk"></i>Salvar dados</button></div>
+          </form>
+          </section>
+        </div>
+
+        <div class="profile-row profile-row-secondary">
+          <section class="panel profile-card appearance-card">
+          <div class="panel-header"><div><h2>Aparência</h2><p>Escolha como o sistema deve ser exibido.</p></div></div>
+          <div class="card-body">
+            <div class="theme-options" role="radiogroup" aria-label="Tema pessoal">
+              <label class="theme-option"><input type="radio" name="tema" value="light" /><span><i class="fa-solid fa-sun"></i><strong>Claro</strong></span></label>
+              <label class="theme-option"><input type="radio" name="tema" value="dark" /><span><i class="fa-solid fa-moon"></i><strong>Escuro</strong></span></label>
+              <label class="theme-option"><input type="radio" name="tema" value="system" /><span><i class="fa-solid fa-display"></i><strong>Usar tema do dispositivo</strong></span></label>
+            </div>
+            <p class="theme-hint">A pré-visualização é imediata. Use “Salvar dados” para confirmar.</p>
+          </div>
+          </section>
+
+          <section class="panel profile-card security-card">
+          <div class="panel-header"><div><h2>Segurança</h2><p>Altere sua senha somente quando necessário.</p></div></div>
+          <form id="formSenha" class="card-body password-grid">
+            <label>Senha atual<input id="senhaAtual" type="password" autocomplete="current-password" /></label>
+            <label>Nova senha<input id="novaSenha" type="password" minlength="6" maxlength="100" autocomplete="new-password" /></label>
+            <label>Confirmar nova senha<input id="confirmacaoSenha" type="password" autocomplete="new-password" /></label>
+            <div class="form-actions"><button class="btn primary" type="submit"><i class="fa-solid fa-key"></i>Alterar senha</button></div>
+          </form>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalCrop" aria-hidden="true">
+    <div class="modal crop-modal" role="dialog" aria-modal="true" aria-labelledby="cropTitle">
+      <div class="modal-header">
+        <div><span class="eyebrow">Imagem</span><h2 id="cropTitle">Ajustar foto</h2></div>
+        <button class="icon-btn" id="btnCancelarCropTopo" type="button" aria-label="Cancelar recorte"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="crop-body">
+        <div class="crop-stage"><img id="cropImage" alt="Imagem selecionada para recorte" /></div>
+        <div class="crop-preview-wrap"><span>Pré-visualização</span><div class="crop-preview"></div></div>
+        <div class="crop-controls">
+          <button class="icon-btn" id="btnZoomOut" type="button" aria-label="Reduzir"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+          <button class="icon-btn" id="btnZoomIn" type="button" aria-label="Ampliar"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+        </div>
+      </div>
+      <div class="modal-footer crop-footer">
+        <button class="btn ghost" id="btnCancelarCrop" type="button">Cancelar</button>
+        <button class="btn primary" id="btnConfirmarCrop" type="button"><i class="fa-solid fa-crop-simple"></i>Confirmar recorte</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/perfil.js"></script>
+</body>
+</html>
